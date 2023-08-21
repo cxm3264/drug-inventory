@@ -109,6 +109,15 @@ $fontColor: #495d83;
       left: 0;
       border-radius: $borderRadius 0 $borderRadius 0;
     }
+    .drug-warning {
+      background: fade-out(#dc4c4e, .85);
+      color: #dc4c4e;
+      padding: 4px 10px;
+      position: absolute;
+      top:  0;
+      right: 0;
+      border-radius: 0 $borderRadius 0  $borderRadius;
+    }
     .drug-info  {
       padding: 0 $gutter / 2;
       > *:not(:last-child) {

@@ -3,7 +3,15 @@
     <hamburger :is-active="sidebar.opened" class="hamburger-container" @toggleClick="toggleSideBar" />
 
     <breadcrumb class="breadcrumb-container" />
-
+    <div class="right-menu">
+      <div class="button" @click="clickUploadList"><svg-icon icon-class="upload" /></div>
+      <div
+        class="button"
+        @click="clickCopyDrugList"
+      >
+        <svg-icon icon-class="download" />
+      </div>
+    </div>
   </div>
 </template>
 
@@ -11,7 +19,8 @@
 import { mapGetters } from 'vuex'
 import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
-
+import Drug from '@/views/drugList/drugList.js'
+import Clipboard from 'clipboard'
 export default {
   components: {
     Breadcrumb,
@@ -30,6 +39,40 @@ export default {
     async logout() {
       await this.$store.dispatch('user/logout')
       this.$router.push(`/login?redirect=${this.$route.fullPath}`)
+    },
+    // 下载当前列表
+    clickCopyDrugList(e) {
+      console.log('e', e)
+      const list = Drug.getInstance().list
+      const clipboard = new Clipboard(e.target, {
+        text: () => {
+          return JSON.stringify(list)
+        }
+      })
+      clipboard.on('success', () => {
+        clipboard.destroy()
+        this.$notify.success('复制成功')
+      })
+      clipboard.on('error', () => {
+        clipboard.destroy()
+        this.$notify.error('复制失败')
+      })
+      clipboard.onClick(e) // 解决第一次点击失败的问题
+    },
+    // 上传列表
+    clickUploadList() {
+      this.$prompt('请输入数据', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消'
+      }).then(({ value }) => {
+        try {
+          const list = JSON.parse(value)
+          Drug.getInstance().setList(list)
+          this.$notify.success('导入成功')
+        } catch (error) {
+          console.error(error)
+        }
+      }).catch(() => {})
     }
   }
 }
@@ -63,51 +106,17 @@ export default {
   .right-menu {
     float: right;
     height: 100%;
-    line-height: 50px;
-
-    &:focus {
-      outline: none;
-    }
-
-    .right-menu-item {
-      display: inline-block;
-      padding: 0 8px;
+    padding-right: 10px;
+    .button {
+      padding: 0 5px;
       height: 100%;
-      font-size: 18px;
-      color: #5a5e66;
-      vertical-align: text-bottom;
-
-      &.hover-effect {
-        cursor: pointer;
-        transition: background .3s;
-
-        &:hover {
-          background: rgba(0, 0, 0, .025)
-        }
-      }
-    }
-
-    .avatar-container {
-      margin-right: 30px;
-
-      .avatar-wrapper {
-        margin-top: 5px;
-        position: relative;
-
-        .user-avatar {
-          cursor: pointer;
-          width: 40px;
-          height: 40px;
-          border-radius: 10px;
-        }
-
-        .el-icon-caret-bottom {
-          cursor: pointer;
-          position: absolute;
-          right: -20px;
-          top: 25px;
-          font-size: 12px;
-        }
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      .svg-icon {
+        width: 28px;
+        height: 28px;
+        pointer-events: none;
       }
     }
   }

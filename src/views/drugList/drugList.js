@@ -1,3 +1,4 @@
+import { getNow } from '@/utils'
 export default class Drug {
   constructor() {
     this.list = []
@@ -9,7 +10,18 @@ export default class Drug {
   }
   // 获取list
   getList() {
-    this.list = JSON.parse(localStorage.getItem('drugList') || '[]')
+    const list = JSON.parse(localStorage.getItem('drugList') || '[]')
+    // 根据药品库存及用量, 计算剩余可用天数
+    this.getRemainingDays(list)
+    this.list = list
+  }
+  // 根据药品库存及用量, 计算剩余可用天数
+  getRemainingDays(list) {
+    list.forEach(item => {
+      const { dosage, inventory } = item
+      item.remainingDays = (inventory / dosage).toFixed(1)
+      item.modifyTime = getNow()
+    })
   }
   // 设置list
   setList(drugList) {

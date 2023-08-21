@@ -7,6 +7,10 @@
         class="drug-item"
       >
         <div class="drug-dosage">每天{{ item.dosage }}次</div>
+        <div v-if="item.remainingDays <= 7" class="drug-warning">
+          <i class="el-icon-warning" />
+          剩余可用天数: {{ item.remainingDays }}天
+        </div>
         <div class="drug-info">
 
           <div class="drug-name">{{ item.name }}</div>
@@ -16,12 +20,16 @@
           <div class="drug-inventory">
             余量: {{ item.inventory }}片
           </div>
+          <div class="">
+            月用量: {{ replenishmentProposal(item) }}
+          </div>
           <div class="memo">
             创建日期: {{ item.cratedTime }}
           </div>
           <div class="memo">
-            更新日期: {{ item.modifyTime }}
+            更新日期: {{ item.modifyTime || '-' }}
           </div>
+
         </div>
         <div class="button-container">
           <div class="left" @click="clickEditItem(item)">
@@ -57,12 +65,20 @@ export default {
     return {
       drug: Drug.getInstance(),
       isShowEditDialog: false,
-      currentEditItem: {}
+      currentEditItem: {},
+      warningDay: 7 // 预警(用量小于7时预警)
     }
   },
   computed: {
     drugList() {
       return this.drug.list
+    },
+    // 补货建议 一个月所需的量
+    replenishmentProposal() {
+      return function(item) {
+        const { dosage, size } = item
+        return `${(dosage * 30 / size).toFixed(1)}盒/月`
+      }
     }
   },
   methods: {
