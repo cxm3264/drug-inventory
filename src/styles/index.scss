@@ -4,12 +4,15 @@
 @import './element-ui.scss';
 @import './sidebar.scss';
 
+
 body {
   height: 100%;
   -moz-osx-font-smoothing: grayscale;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
   font-family: Helvetica Neue, Helvetica, PingFang SC, Hiragino Sans GB, Microsoft YaHei, Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
 }
 
 label {
@@ -62,4 +65,128 @@ div:focus {
 // main-container global css
 .app-container {
   padding: 20px;
+}
+
+
+ul {
+  padding: 0;
+  margin: 0;
+  list-style-type: none;
+}
+
+$gutter: 15px;
+$borderRadius: 12px;
+$colorPrimary: #5383ec;
+$fontColor: #495d83;
+.page-container {
+  background: #f5f7fd;
+  width: 100vw;
+  height: calc(100vh - 50px);
+  padding: $gutter;
+  overflow-y: auto;
+  overflow-x: hidden;
+  color: $fontColor;
+}
+
+.drug-list {
+  .drug-item {
+    background: #ffffff;
+    border-radius: $borderRadius;
+    padding-top: $gutter / 2 + 30px;
+    margin-bottom: $gutter;
+    box-shadow:
+      2.6px 4.4px 14px fade-out($colorPrimary, .985),
+      15px 26px 80px fade-out($colorPrimary, .993)
+    ;
+    position: relative;
+    min-height: 100px;
+    .drug-dosage {
+      background: fade-out($colorPrimary, .85);
+      color: $colorPrimary;
+      padding: 4px 10px;
+      position: absolute;
+      top:  0;
+      left: 0;
+      border-radius: $borderRadius 0 $borderRadius 0;
+    }
+    .drug-info  {
+      padding: 0 $gutter / 2;
+      > *:not(:last-child) {
+        margin-bottom: 4px;
+      }
+      .drug-name {
+        font-size: 1.2em;
+        font-weight: 500;
+      }
+    }
+
+    .button-container {
+      border-top: 1px solid #f3f4f6;
+      display: flex;
+      align-items: center;
+      margin-top: $gutter;
+      padding: $gutter;
+      .left,
+      .right {
+        flex: 0 0 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        .svg-icon {
+          font-size: 20px;
+          margin-right: 2px;
+        }
+      }
+      .left {
+        
+        border-right: 1px solid #f3f4f6;
+      }
+      .right {
+
+      }
+    }
+  }
+}
+
+.add-button {
+  position: fixed;
+  border-radius: 50%;
+  bottom: 20px;
+  right: 20px;
+  width: 40px;
+  height: 40px;
+  background: fade-out($colorPrimary, .1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 16px;
+  box-shadow:
+    2.6px 4.4px 14px rgba(0, 0, 0, 0.2),
+    15px 26px 80px rgba(0, 0, 0, 0.22)
+  ;
+}
+
+.drug-dialog {
+  .el-dialog__header {
+    padding: $gutter;
+  }
+  .el-dialog__body {
+    padding: 0 $gutter $gutter;
+  }
+  .el-form-item {
+    margin-bottom: $gutter / 2;
+  }
+  .el-form--label-top .el-form-item__label {
+    padding-bottom: 0;
+    font-weight: normal;
+  }
+  .el-input-number {
+    width: 100%;
+  }
+}
+
+.el-message-box {
+  width: 280px;
 }
