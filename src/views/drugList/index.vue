@@ -16,6 +16,12 @@
           <div class="drug-inventory">
             余量: {{ item.inventory }}片
           </div>
+          <div class="memo">
+            创建日期: {{ item.cratedTime }}
+          </div>
+          <div class="memo">
+            更新日期: {{ item.modifyTime }}
+          </div>
         </div>
         <div class="button-container">
           <div class="left" @click="clickEditItem(item)">

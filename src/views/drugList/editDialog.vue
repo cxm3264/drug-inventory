@@ -28,9 +28,8 @@
   </el-dialog>
 </template>
 <script>
-import { getUUID } from '@/utils'
+import { getUUID, getNow } from '@/utils'
 import Drug from './drugList.js'
-import { getNow } from 'moment'
 export default {
   name: 'EditDialog',
   props: {
