@@ -5,37 +5,49 @@
         v-for="item in drugList"
         :key="item.id"
         class="drug-item"
+        :style="{ paddingBottom: listMode === 'simple' ? '10px' : '0px'}"
+        @click="clickEditItem(item)"
       >
         <div class="drug-dosage">每天{{ item.dosage }}次</div>
-        <div v-if="item.remainingDays <= 7" class="drug-warning">
+        <div
+          class="drug-remind"
+          :class="[item.remainingDays <= 7 ? 'danger' : 'success']"
+        >
           <i class="el-icon-warning" />
           剩余可用天数: {{ item.remainingDays }}天
         </div>
         <div class="drug-info">
 
-          <div class="drug-name">{{ item.name }}</div>
-          <div class="drug-inventory">
-            规格: {{ item.size }}片/盒
+          <div class="drug-name">
+            {{ item.name }}
+            <el-tag v-if="item.mg" type="primary" effect="plain">
+              {{ item.mg }}mg
+            </el-tag>
           </div>
-          <div class="drug-inventory">
-            余量: {{ item.inventory }}片
-          </div>
-          <div class="">
-            月用量: {{ replenishmentProposal(item) }}
-          </div>
-          <div class="memo">
-            创建日期: {{ item.cratedTime }}
-          </div>
-          <div class="memo">
-            更新日期: {{ item.modifyTime || '-' }}
+          <div v-show="listMode === 'detail'">
+            <div class="drug-inventory">
+              规格: {{ item.size }}片/盒
+            </div>
+            <div class="drug-inventory">
+              余量: {{ item.inventory }}片
+            </div>
+            <div class="">
+              月用量: {{ replenishmentProposal(item) }}
+            </div>
+            <div class="memo">
+              创建日期: {{ item.cratedTime }}
+            </div>
+            <div class="memo">
+              更新日期: {{ item.modifyTime || '-' }}
+            </div>
           </div>
 
         </div>
-        <div class="button-container">
-          <div class="left" @click="clickEditItem(item)">
+        <div v-show="listMode === 'detail'" class="button-container">
+          <div class="left" @click.stop="clickEditItem(item)">
             <svg-icon icon-class="edit" />编辑
           </div>
-          <div class="right" @click="clickRemoveItem(item)">
+          <div class="right" @click.stop="clickRemoveItem(item)">
             <svg-icon icon-class="remove" />删除
           </div>
         </div>
@@ -43,6 +55,9 @@
     </ul>
     <div class="add-button" @click="clickAddItem">
       <i class="el-icon-plus" />
+    </div>
+    <div class="toggle-list" @click="clickToggleListMode">
+      <svg-icon :icon-class="listMode" />
     </div>
     <edit-dialog
       :visible.sync="isShowEditDialog"
@@ -63,6 +78,7 @@ export default {
   },
   data() {
     return {
+      listMode: 'simple', // 列表展示模式 精简版 simple 详细版 detail
       drug: Drug.getInstance(),
       isShowEditDialog: false,
       currentEditItem: {},
@@ -87,7 +103,8 @@ export default {
         name: '',
         size: undefined,
         dosage: undefined, // 每天x次
-        inventory: undefined // 余量
+        inventory: undefined, // 余量
+        mg: undefined // 多少毫克
       }
       this.isShowEditDialog = true
     },
@@ -105,6 +122,9 @@ export default {
         this.drug.removeDrugItem(item.id)
         this.$notify.success('删除成功')
       }).catch(() => {})
+    },
+    clickToggleListMode() {
+      this.listMode = this.listMode === 'simple' ? 'detail' : 'simple'
     }
   }
 }

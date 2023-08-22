@@ -11,6 +11,9 @@
       <el-form-item required label="药品名称">
         <el-input v-model="localItem.name" placeholder="" />
       </el-form-item>
+      <el-form-item label="mg">
+        <el-input-number v-model="localItem.mg" :min="0" controls-position="right" />
+      </el-form-item>
       <el-form-item required label="规格(片/盒)">
         <el-input-number v-model="localItem.size" :min="0" controls-position="right" />
       </el-form-item>

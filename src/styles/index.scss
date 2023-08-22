@@ -99,7 +99,7 @@ $fontColor: #495d83;
       15px 26px 80px fade-out($colorPrimary, .993)
     ;
     position: relative;
-    min-height: 100px;
+    // min-height: 100px;
     .drug-dosage {
       background: fade-out($colorPrimary, .85);
       color: $colorPrimary;
@@ -109,14 +109,20 @@ $fontColor: #495d83;
       left: 0;
       border-radius: $borderRadius 0 $borderRadius 0;
     }
-    .drug-warning {
-      background: fade-out(#dc4c4e, .85);
-      color: #dc4c4e;
+    .drug-remind {
       padding: 4px 10px;
       position: absolute;
       top:  0;
       right: 0;
       border-radius: 0 $borderRadius 0  $borderRadius;
+      &.danger {
+        background: fade-out(#dc4c4e, .85);
+        color: #dc4c4e;
+      }
+      &.success {
+        background: fade-out(#67C23A, .85);
+        color: #67C23A;
+      }
     }
     .drug-info  {
       padding: 0 $gutter / 2;
@@ -178,6 +184,21 @@ $fontColor: #495d83;
     2.6px 4.4px 14px rgba(0, 0, 0, 0.2),
     15px 26px 80px rgba(0, 0, 0, 0.22)
   ;
+}
+
+.toggle-list {
+  position: fixed;
+  top: 0;
+  right: 100px;
+  height: 50px;
+  line-height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  .svg-icon {
+    width: 24px!important;
+    height: 24px!important;
+  }
 }
 
 .drug-dialog {
