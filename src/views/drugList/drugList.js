@@ -13,7 +13,7 @@ export default class Drug {
     const list = JSON.parse(localStorage.getItem('drugList') || '[]')
     // 根据药品库存及用量, 计算剩余可用天数
     this.getRemainingDays(list)
-    this.list = list
+    this.list = list.sort((a, b) => a.remainingDays - b.remainingDays)
   }
   // 根据药品库存及用量, 计算剩余可用天数
   getRemainingDays(list) {
