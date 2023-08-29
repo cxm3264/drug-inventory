@@ -6,6 +6,7 @@
 
 
 body {
+  overflow: hidden;
   height: 100%;
   -moz-osx-font-smoothing: grayscale;
   -webkit-font-smoothing: antialiased;
@@ -199,6 +200,10 @@ $fontColor: #495d83;
     width: 24px!important;
     height: 24px!important;
   }
+}
+.update-button {
+  @extend .toggle-list;
+  right: 140px;
 }
 
 .drug-dialog {

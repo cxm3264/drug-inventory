@@ -59,6 +59,9 @@
     <div class="toggle-list" @click="clickToggleListMode">
       <svg-icon :icon-class="listMode" />
     </div>
+    <div class="update-button" @click="clickUpdateItems">
+      <svg-icon icon-class="update" />
+    </div>
     <edit-dialog
       :visible.sync="isShowEditDialog"
       :item.sync="currentEditItem"
@@ -70,7 +73,7 @@
 import cloneDeep from 'lodash/cloneDeep'
 import editDialog from './editDialog'
 import Drug from './drugList.js'
-
+import { getNow } from '@/utils'
 export default {
   name: 'DrugList',
   components: {
@@ -125,6 +128,25 @@ export default {
     },
     clickToggleListMode() {
       this.listMode = this.listMode === 'simple' ? 'detail' : 'simple'
+    },
+    // 更新所有药品(减一周的量)
+    clickUpdateItems() {
+      this.$confirm(`是否更新所有药品, 库存将减少一周的量?`, '提示', {
+        confirmButtonText: '更新',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        const res = this.drugList.map(item => {
+          const { dosage } = item
+          return {
+            ...item,
+            inventory: item.inventory - dosage * 7, // 更新库存量
+            modifyTime: getNow()
+          }
+        })
+        this.drug.setList(res)
+        this.$notify.success('更新成功')
+      }).catch(() => {})
     }
   }
 }
