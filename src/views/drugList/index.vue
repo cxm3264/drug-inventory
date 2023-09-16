@@ -5,10 +5,11 @@
         v-for="item in drugList"
         :key="item.id"
         class="drug-item"
+        :class="[item.disabled ? 'drug-item--disabled' : '']"
         :style="{ paddingBottom: listMode === 'simple' ? '10px' : '0px'}"
         @click="clickEditItem(item)"
       >
-        <div class="drug-dosage">每天{{ item.dosage }}次</div>
+        <div class="drug-dosage">每天{{ item.dosage }}片</div>
         <div
           class="drug-remind"
           :class="[item.remainingDays <= 7 ? 'danger' : 'success']"
@@ -107,7 +108,8 @@ export default {
         size: undefined,
         dosage: undefined, // 每天x次
         inventory: undefined, // 余量
-        mg: undefined // 多少毫克
+        mg: undefined, // 多少毫克
+        disabled: false // 是否禁用
       }
       this.isShowEditDialog = true
     },
@@ -136,16 +138,29 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
+        const stockOut = []
         const res = this.drugList.map(item => {
+          if (item.disabled) {
+            return item
+          }
           const { dosage } = item
+          const updateInventory = item.inventory - dosage * 7
+          if (updateInventory < 0) {
+            stockOut.push(item.name)
+          }
           return {
             ...item,
-            inventory: item.inventory - dosage * 7, // 更新库存量
+            inventory: updateInventory, // 更新库存量
             modifyTime: getNow()
           }
         })
         this.drug.setList(res)
         this.$notify.success('更新成功')
+        stockOut.forEach(item => {
+          setTimeout(() => {
+            this.$notify.warning(`药品[${item}] 库存不足`)
+          }, 0)
+        })
       }).catch(() => {})
     }
   }

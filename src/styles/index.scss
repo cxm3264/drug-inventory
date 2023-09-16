@@ -6,7 +6,7 @@
 
 
 body {
-  overflow: hidden;
+  // overflow: hidden;
   height: 100%;
   -moz-osx-font-smoothing: grayscale;
   -webkit-font-smoothing: antialiased;
@@ -82,14 +82,17 @@ $fontColor: #495d83;
 .page-container {
   background: #f5f7fd;
   width: 100vw;
-  height: calc(100vh - 50px);
+  height: 100%;
+  // height: calc(100vh - 50px);
   padding: $gutter;
-  overflow-y: auto;
-  overflow-x: hidden;
+  // overflow: hidden;
   color: $fontColor;
 }
 
 .drug-list {
+  // height: 100%;
+  // overflow-y: scroll;
+  // -webkit-overflow-scrolling: touch;
   .drug-item {
     background: #ffffff;
     border-radius: $borderRadius;
@@ -100,6 +103,9 @@ $fontColor: #495d83;
       15px 26px 80px fade-out($colorPrimary, .993)
     ;
     position: relative;
+    &--disabled {
+      background: #EBEEF5;
+    }
     // min-height: 100px;
     .drug-dosage {
       background: fade-out($colorPrimary, .85);
@@ -189,6 +195,7 @@ $fontColor: #495d83;
 
 .toggle-list {
   position: fixed;
+  z-index: 10;
   top: 0;
   right: 100px;
   height: 50px;

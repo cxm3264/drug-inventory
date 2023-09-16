@@ -17,11 +17,17 @@
       <el-form-item required label="规格(片/盒)">
         <el-input-number v-model="localItem.size" :min="0" controls-position="right" />
       </el-form-item>
-      <el-form-item required label="用量(次/天)">
+      <el-form-item required label="用量(片/天)">
         <el-input-number v-model="localItem.dosage" :min="0" controls-position="right" />
       </el-form-item>
       <el-form-item required label="余量">
         <el-input-number v-model="localItem.inventory" :min="0" controls-position="right" />
+      </el-form-item>
+      <el-form-item required label="状态">
+        <el-radio-group v-model="localItem.disabled">
+          <el-radio :label="false">启用</el-radio>
+          <el-radio :label="true">禁用</el-radio>
+        </el-radio-group>
       </el-form-item>
     </el-form>
     <span slot="footer">
@@ -76,7 +82,7 @@ export default {
   },
   methods: {
     validateForm() {
-      const { name, size, dosage, inventory } = this.localItem
+      const { name, size, dosage } = this.localItem
       if (!name) {
         return { status: 'error', message: '请填写药品名称' }
       }
@@ -85,9 +91,6 @@ export default {
       }
       if (!dosage) {
         return { status: 'error', message: '请填写用量' }
-      }
-      if (!inventory) {
-        return { status: 'error', message: '请填写余量' }
       }
       return { status: 'success' }
     },

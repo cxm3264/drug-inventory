@@ -10,10 +10,17 @@ export default class Drug {
   }
   // 获取list
   getList() {
-    const list = JSON.parse(localStorage.getItem('drugList') || '[]')
+    let list = JSON.parse(localStorage.getItem('drugList') || '[]')
+    list = list.map(item => {
+      return {
+        ...item,
+        disabled: typeof item.disabled === 'undefined' ? false : item.disabled
+      }
+    })
     // 根据药品库存及用量, 计算剩余可用天数
     this.getRemainingDays(list)
     this.list = list.sort((a, b) => a.remainingDays - b.remainingDays)
+    this.list = list.sort((a, b) => a.disabled - b.disabled)
   }
   // 根据药品库存及用量, 计算剩余可用天数
   getRemainingDays(list) {
