@@ -19,13 +19,16 @@
 import { mapGetters } from 'vuex'
 import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
-import Drug from '@/views/drugList/drugList.js'
+import drugDBMixin from '@/views/drugList/drugDB.js'
+import refChildrenMixin from '@/mixins/ref-children-mixin'
+
 import Clipboard from 'clipboard'
 export default {
   components: {
     Breadcrumb,
     Hamburger
   },
+  mixins: [drugDBMixin, refChildrenMixin],
   computed: {
     ...mapGetters([
       'sidebar',
@@ -42,8 +45,7 @@ export default {
     },
     // 下载当前列表
     clickCopyDrugList(e) {
-      console.log('e', e)
-      const list = Drug.getInstance().list
+      const list = JSON.stringify(this.drugList)
       const clipboard = new Clipboard(e.target, {
         text: () => {
           return JSON.stringify(list)
@@ -64,10 +66,16 @@ export default {
       this.$prompt('请输入数据', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消'
-      }).then(({ value }) => {
+      }).then(async({ value }) => {
         try {
           const list = JSON.parse(value)
-          Drug.getInstance().setList(list)
+          console.log('list', list)
+          const drugComponent = this.getChildrenRef('routerView')
+          await drugComponent.dbInstance.delete_table(drugComponent.tableName)
+          list.forEach(item => {
+            drugComponent.addDrugItem(item, false)
+          })
+          drugComponent.getDrugList()
           this.$notify.success('导入成功')
         } catch (error) {
           console.error(error)

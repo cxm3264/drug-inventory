@@ -213,6 +213,11 @@ $fontColor: #495d83;
   @extend .toggle-list;
   right: 140px;
 }
+.setting-input {
+  @extend .toggle-list;
+  width: 100px;
+  right: 180px;
+}
 
 .drug-dialog {
   .el-dialog__header {

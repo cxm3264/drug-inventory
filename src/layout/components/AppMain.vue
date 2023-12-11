@@ -1,14 +1,21 @@
 <template>
-  <section class="app-main">
+  <section>
     <transition name="fade-transform" mode="out-in">
-      <router-view :key="key" />
+      <router-view
+        :key="key"
+        v-ref="c => setChildrenRef('routerView', c)"
+        class="app-main"
+      />
     </transition>
   </section>
 </template>
 
 <script>
+import refChildrenMixin from '@/mixins/ref-children-mixin'
+
 export default {
   name: 'AppMain',
+  mixins: [refChildrenMixin],
   computed: {
     key() {
       return this.$route.path
@@ -24,10 +31,9 @@ export default {
   width: 100%;
   position: relative;
   overflow: hidden;
+  padding-top: 65px;
 }
-.fixed-header+.app-main {
-  padding-top: 50px;
-}
+
 </style>
 
 <style lang="scss">

@@ -38,9 +38,10 @@
 </template>
 <script>
 import { getUUID, getNow } from '@/utils'
-import Drug from './drugList.js'
+
 export default {
   name: 'EditDialog',
+  inject: ['root'],
   props: {
     visible: {
       type: Boolean,
@@ -53,7 +54,6 @@ export default {
   },
   data() {
     return {
-      drug: Drug.getInstance()
     }
   },
   computed: {
@@ -109,7 +109,7 @@ export default {
       this.localVisible = false
     },
     addItem() {
-      this.drug.addDrugItem({
+      this.root.addDrugItem({
         id: getUUID(),
         cratedTime: getNow(),
         modifyTime: undefined,
@@ -117,7 +117,7 @@ export default {
       })
     },
     updateItem() {
-      this.drug.updateDrugItem({
+      this.root.updateDrugItem({
         modifyTime: getNow(),
         ...this.localItem
       })

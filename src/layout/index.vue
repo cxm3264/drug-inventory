@@ -14,7 +14,7 @@
 <script>
 import { Navbar, Sidebar, AppMain } from './components'
 import ResizeMixin from './mixin/ResizeHandler'
-
+import refParentMixin from '@/mixins/ref-parent-mixin'
 export default {
   name: 'Layout',
   components: {
@@ -22,7 +22,7 @@ export default {
     Sidebar,
     AppMain
   },
-  mixins: [ResizeMixin],
+  mixins: [ResizeMixin, refParentMixin],
   computed: {
     sidebar() {
       return this.$store.state.app.sidebar

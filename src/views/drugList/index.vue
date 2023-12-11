@@ -12,13 +12,12 @@
         <div class="drug-dosage">每天{{ item.dosage }}片</div>
         <div
           class="drug-remind"
-          :class="[item.remainingDays <= 7 ? 'danger' : 'success']"
+          :class="[getRemainingDays(item) <= 7 ? 'danger' : 'success']"
         >
           <i class="el-icon-warning" />
-          剩余可用天数: {{ item.remainingDays }}天
+          剩余可用天数: {{ getRemainingDays(item) }}天
         </div>
         <div class="drug-info">
-
           <div class="drug-name">
             {{ item.name }}
             <el-tag v-if="item.mg" type="primary" effect="plain">
@@ -63,6 +62,14 @@
     <div class="update-button" @click="clickUpdateItems">
       <svg-icon icon-class="update" />
     </div>
+    <div class="setting-input">
+      <el-input
+        v-model="updateDay"
+        type="number"
+        :controls="false"
+        placeholder=""
+      />
+    </div>
     <edit-dialog
       :visible.sync="isShowEditDialog"
       :item.sync="currentEditItem"
@@ -73,31 +80,41 @@
 <script>
 import cloneDeep from 'lodash/cloneDeep'
 import editDialog from './editDialog'
-import Drug from './drugList.js'
+import drugDBMixin from './drugDB.js'
 import { getNow } from '@/utils'
 export default {
   name: 'DrugList',
   components: {
     editDialog
   },
+  mixins: [drugDBMixin],
+  provide() {
+    return {
+      root: this
+    }
+  },
   data() {
     return {
       listMode: 'simple', // 列表展示模式 精简版 simple 详细版 detail
-      drug: Drug.getInstance(),
       isShowEditDialog: false,
       currentEditItem: {},
-      warningDay: 7 // 预警(用量小于7时预警)
+      warningDay: 7, // 预警(用量小于7时预警)
+      updateDay: 7 // 默认更新药品库存天数
     }
   },
   computed: {
-    drugList() {
-      return this.drug.list
-    },
     // 补货建议 一个月所需的量
     replenishmentProposal() {
       return function(item) {
         const { dosage, size } = item
         return `${(dosage * 30 / size).toFixed(1)}盒/月`
+      }
+    },
+    // 剩余可用天数
+    getRemainingDays() {
+      return function(item) {
+        const { dosage, inventory } = item
+        return (inventory / dosage).toFixed(1)
       }
     }
   },
@@ -114,7 +131,6 @@ export default {
       this.isShowEditDialog = true
     },
     clickEditItem(item) {
-      console.log('cloneDeep(item)', cloneDeep(item))
       this.currentEditItem = cloneDeep(item)
       this.isShowEditDialog = true
     },
@@ -124,7 +140,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.drug.removeDrugItem(item.id)
+        this.removeDrugItem(item.id)
         this.$notify.success('删除成功')
       }).catch(() => {})
     },
@@ -133,18 +149,18 @@ export default {
     },
     // 更新所有药品(减一周的量)
     clickUpdateItems() {
-      this.$confirm(`是否更新所有药品, 库存将减少一周的量?`, '提示', {
+      this.$confirm(`是否更新所有药品, 库存将减少${this.updateDay}天的量?`, '提示', {
         confirmButtonText: '更新',
         cancelButtonText: '取消',
         type: 'warning'
-      }).then(() => {
+      }).then(async() => {
         const stockOut = []
         const res = this.drugList.map(item => {
           if (item.disabled) {
             return item
           }
           const { dosage } = item
-          const updateInventory = item.inventory - dosage * 7
+          const updateInventory = item.inventory - dosage * this.updateDay
           if (updateInventory < 0) {
             stockOut.push(item.name)
           }
@@ -154,7 +170,10 @@ export default {
             modifyTime: getNow()
           }
         })
-        this.drug.setList(res)
+        res.forEach(item => {
+          this.updateDrugItem(item, false)
+        })
+        await this.getDrugList()
         this.$notify.success('更新成功')
         stockOut.forEach(item => {
           setTimeout(() => {
