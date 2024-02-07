@@ -2,7 +2,7 @@
   <div class="page-container">
     <ul class="drug-list">
       <li
-        v-for="item in drugList"
+        v-for="item in drugListView"
         :key="item.id"
         class="drug-item"
         :class="[item.disabled ? 'drug-item--disabled' : '']"
@@ -116,6 +116,12 @@ export default {
         const { dosage, inventory } = item
         return (inventory / dosage).toFixed(1)
       }
+    },
+    drugListView() {
+      const drugList = this.drugList
+      return drugList
+        .sort((a, b) => this.getRemainingDays(a) - this.getRemainingDays(b))
+        .sort((a, b) => a.disabled - b.disabled)
     }
   },
   methods: {

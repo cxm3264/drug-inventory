@@ -36,9 +36,7 @@ export default {
         tableName: this.tableName
       })
       console.log('res', res)
-
-      this.drugList = res.sort((a, b) => a.remainingDays - b.remainingDays)
-      this.drugList = res.sort((a, b) => a.disabled - b.disabled)
+      this.drugList = res
     },
     // 根据ID获取项
     async getDrugItem(id) {
